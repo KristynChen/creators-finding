@@ -292,15 +292,53 @@
         }
 
         @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-            0%,
-            100% {
-                transform: translateY(0px);
-            }
+        /* --- Card Stack Styles --- */
+        #showcase-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden; /* Important for the trail */
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.02);
+            cursor: crosshair;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-            50% {
-                transform: translateY(-10px);
-            }
+        .showcase-placeholder {
+            text-align: center;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .trail-image {
+            position: absolute;
+            width: 280px;
+            height: auto;
+            pointer-events: none;
+            user-select: none;
+            transform: translate(-50%, -50%) scale(0.6);
+            opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
+            border: 8px solid white;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            background: #eee;
+        }
+
+        .trail-image.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .grabbing {
+            cursor: grabbing;
         }
     </style>
     <base target="_blank">
@@ -315,6 +353,7 @@
         <a href="#solution" class="toc-link">Solution</a>
         <a href="#how-it-works" class="toc-link">How It Works</a>
         <a href="#proof" class="toc-link">Proof</a>
+        <a href="#showcase" class="toc-link">Showcase</a>
         <a href="#cta" class="toc-link">Get Started</a>
     </nav>
 
@@ -352,7 +391,7 @@
                         <div class="flex items-center space-x-2">
                             <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8712.png"
                                 alt="Skincare influencer professional headshot" class="w-8 h-8 rounded-full"
-                                size="small" aspect="square" style="photo" query="skincare influencer headshot"
+                                size="small" aspect="square" data-style="photo" query="skincare influencer headshot"
                                 referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
                             <div>
                                 <div class="text-sm font-medium">Skincare Creator</div>
@@ -547,7 +586,7 @@
                                 <div class="text-sm font-bold text-primary">92%</div>
                             </div>
                             <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                <div class="bg-primary h-full rounded-full" style="width: 92%"></div>
+                                <div class="bg-primary h-full rounded-full" style="width: 92%;"></div>
                             </div>
                             <div class="text-[10px] text-slate-500 mt-3 flex items-center">
                                 <i class="fas fa-shield-alt mr-1 text-primary"></i> Verified Global Database
@@ -666,7 +705,7 @@
                     <div class="flex items-center space-x-3 mb-4">
                         <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8717.png"
                             alt="Skincare influencer portrait" class="w-16 h-16 rounded-full" size="small"
-                            aspect="square" style="photo" query="skincare influencer portrait"
+                            aspect="square" data-style="photo" query="skincare influencer portrait"
                             referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
                         <div>
                             <div class="font-semibold">Elena Rossi</div>
@@ -685,7 +724,7 @@
                     <div class="flex items-center space-x-3 mb-4">
                         <img src="https://kimi-web-img.moonshot.cn/img/i1.feedspot.com/c4c3d6803d1a8086d94fdf2fe3129e731e011135.jpg"
                             alt="Female fitness influencer portrait" class="w-16 h-16 rounded-full" size="small"
-                            aspect="square" style="photo" query="female fitness influencer portrait"
+                            aspect="square" data-style="photo" query="female fitness influencer portrait"
                             referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
                         <div>
                             <div class="font-semibold">Marcus Smith</div>
@@ -704,7 +743,7 @@
                     <div class="flex items-center space-x-3 mb-4">
                         <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8713.png"
                             alt="Minimalist Asian beauty influencer portrait" class="w-16 h-16 rounded-full"
-                            size="small" aspect="square" style="photo" query="minimalist asian beauty influencer"
+                            size="small" aspect="square" data-style="photo" query="minimalist asian beauty influencer"
                             referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
                         <div>
                             <div class="font-semibold">Aria Chen</div>
@@ -723,7 +762,7 @@
                     <div class="flex items-center space-x-3 mb-4">
                         <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8714.png"
                             alt="Portrait of a wellness influencer" class="w-16 h-16 rounded-full" size="small"
-                            aspect="square" style="photo" query="wellness influencer portrait"
+                            aspect="square" data-style="photo" query="wellness influencer portrait"
                             referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
                         <div>
                             <div class="font-semibold">Sarah Johnson</div>
@@ -774,6 +813,33 @@
                 </div>
                 <p class="text-sm text-muted-foreground text-center mt-6">
                     Global lifestyle and beauty brands testing our platform
+                </p>
+            </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section id="showcase" class="section-padding bg-slate-50 border-y border-border overflow-hidden">
+        <div class="container">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                    Global Campaign Showcase
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Real-world examples of how brands use Nexus to find and power their creative partnerships.
+                </p>
+            </div>
+
+            <div id="showcase-container" class="fade-in">
+                <div class="showcase-placeholder">
+                    <i class="fas fa-mouse-pointer text-5xl text-primary/20 mb-4 block"></i>
+                    <p class="text-2xl font-display font-bold text-slate-300">Move your mouse here</p>
+                    <p class="text-sm text-slate-400">Discover our collection of successful campaigns</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12 fade-in">
+                <p class="text-sm text-muted-foreground italic">
+                    <i class="fas fa-magic mr-2"></i> Our AI-powered discovery has matched thousands of creators with global brands.
                 </p>
             </div>
         </div>
@@ -981,6 +1047,75 @@
                 vantaEffect.destroy();
             }
         });
+
+        // --- Image Mouse Trail Logic ---
+        const trailContainer = document.getElementById('showcase-container');
+        const trailImages = [
+            'assets/campaign_skincare_minimalist_1773946671332.png',
+            'assets/campaign_fitness_apparel_1773946687610.png',
+            'assets/campaign_wellness_tech_1773946702086.png',
+            'assets/campaign_beauty_vibrant_1773946716360.png',
+            'assets/campaign_travel_lifestyle_1773946733016.png',
+            'assets/campaign_fashion_streetwear_1773947346679.png',
+            'assets/campaign_coffee_premium_1773947360201.png',
+            'assets/campaign_pet_accessories_1773947375458.png',
+            'assets/campaign_home_decor_1773947394372.png',
+            'assets/campaign_gaming_tech_1773947409781.png'
+        ];
+
+        let trailIdx = 0;
+        let trailZ = 1;
+        let lastTrailPos = { x: 0, y: 0 };
+        const trailThreshold = 120; // Distance in px before dropping next image
+
+        trailContainer.addEventListener('mousemove', (e) => {
+            const rect = trailContainer.getBoundingClientRect();
+            const relX = e.clientX - rect.left;
+            const relY = e.clientY - rect.top;
+
+            // Only drop if mouse is within container bounds (extra safety)
+            if (relX < 0 || relX > rect.width || relY < 0 || relY > rect.height) return;
+
+            const dist = Math.hypot(relX - lastTrailPos.x, relY - lastTrailPos.y);
+
+            if (dist > trailThreshold) {
+                spawnTrailImage(relX, relY);
+                lastTrailPos = { x: relX, y: relY };
+            }
+        });
+
+        function spawnTrailImage(x, y) {
+            const img = document.createElement('img');
+            img.src = trailImages[trailIdx];
+            img.className = 'trail-image';
+            
+            // Random rotation for organic feel
+            const rot = (Math.random() - 0.5) * 30; // -15 to 15 deg
+            
+            img.style.left = `${x}px`;
+            img.style.top = `${y}px`;
+            img.style.zIndex = trailZ;
+            
+            trailContainer.appendChild(img);
+
+            // Trigger enter animation
+            setTimeout(() => {
+                img.classList.add('show');
+                img.style.transform += ` rotate(${rot}deg)`;
+            }, 50);
+
+            // Cycle images and depth
+            trailIdx = (trailIdx + 1) % trailImages.length;
+            trailZ++;
+
+            // Clean up: keep only latest 25 images for performance
+            if (trailContainer.querySelectorAll('.trail-image').length > 25) {
+                const first = trailContainer.querySelector('.trail-image');
+                first.style.opacity = '0';
+                first.style.transform += ' scale(0.8) translateY(20px)';
+                setTimeout(() => first.remove(), 600);
+            }
+        }
     </script>
 
 
