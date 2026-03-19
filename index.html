@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Creators Who Fit Your Brand | AI Matching Platform</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap"
+        rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Vanta.js for animated background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
+    <style>
+        :root {
+            --background: #fafaf9;
+            --foreground: #1c1917;
+            --muted: #f5f5f4;
+            --muted-foreground: #78716c;
+            --primary: #7c3aed;
+            --primary-foreground: #ffffff;
+            --primary-hover: #6d28d9;
+            --border: #e7e5e4;
+            --ring: #7c3aed;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--foreground);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.3;
+            filter: blur(120px);
+            border-radius: 9999px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .section-padding {
+            padding: 6rem 0;
+        }
+
+        @media (min-width: 768px) {
+            .section-padding {
+                padding: 8rem 0;
+            }
+        }
+
+        .card-hover {
+            transition: all 0.3s ease-out;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .match-score {
+            background: linear-gradient(90deg, var(--primary), #9d5bff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .toc {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 200px;
+            background: rgba(250, 250, 249, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            z-index: 50;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+
+        .toc a {
+            display: block;
+            padding: 0.5rem 0;
+            color: var(--muted-foreground);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .toc a:hover {
+            color: var(--primary);
+        }
+
+        .toc a.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        @media (max-width: 1280px) {
+            .toc {
+                display: none;
+            }
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border: none;
+            border-radius: 9999px;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--foreground);
+            border: 1px solid var(--border);
+            border-radius: 9999px;
+            padding: 0.75rem 2rem;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--muted);
+            border-color: var(--muted-foreground);
+        }
+
+        .citation {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .citation:hover {
+            border-bottom-color: var(--primary);
+        }
+
+        .featured-creator {
+            background: linear-gradient(135deg, var(--background) 0%, var(--muted) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .featured-creator:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.1);
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .hero-visual {
+            position: relative;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-card {
+            position: absolute;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-card:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-card:nth-child(2) {
+            top: 40%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-card:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+    <base target="_blank">
+</head>
+
+<body>
+    <!-- Fixed Table of Contents -->
+    <nav class="toc">
+        <h3 class="font-semibold mb-4 text-sm">Contents</h3>
+        <a href="#hero" class="toc-link">Hero</a>
+        <a href="#problem" class="toc-link">Problem</a>
+        <a href="#solution" class="toc-link">Solution</a>
+        <a href="#how-it-works" class="toc-link">How It Works</a>
+        <a href="#proof" class="toc-link">Proof</a>
+        <a href="#cta" class="toc-link">Get Started</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center section-padding">
+        <div id="vanta-bg" class="hero-bg"></div>
+        <div class="gradient-orb"></div>
+
+        <div class="container">
+            <div class="bento-grid">
+                <div class="hero-content fade-in">
+                    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                        Find Creators Who Fit Your Brand
+                    </h1>
+                    <p class="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                        AI-powered matching for global lifestyle, beauty, and fitness marketing—discover the right
+                        voices, not just the loudest ones.
+                    </p>
+                    <div class="hero-cta">
+                        <button class="btn-primary" onclick="showBrandForm()">
+                            Start Discovering
+                        </button>
+                        <button class="btn-secondary" onclick="showCreatorForm()">
+                            Join as Creator
+                        </button>
+                    </div>
+                    <a href="#problem"
+                        class="text-sm text-muted-foreground hover:text-primary transition-colors mt-4 block">
+                        Learn More <i class="fas fa-arrow-down ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="hero-visual fade-in">
+                    <div class="floating-card w-32 md:w-40">
+                        <div class="flex items-center space-x-2">
+                            <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8712.png"
+                                alt="Skincare influencer professional headshot" class="w-8 h-8 rounded-full"
+                                size="small" aspect="square" style="photo" query="skincare influencer headshot"
+                                referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
+                            <div>
+                                <div class="text-sm font-medium">Skincare Creator</div>
+                                <div class="text-xs text-muted-foreground">32K followers</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="floating-card w-36 md:w-48">
+                        <div class="match-score text-2xl font-bold">87% Match</div>
+                        <div class="text-sm text-muted-foreground">Based on your criteria</div>
+                    </div>
+                    <div class="floating-card w-28 md:w-36">
+                        <div class="text-sm font-medium">Ready to Collab</div>
+                        <div class="text-xs text-green-600">Available</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section id="problem" class="section-padding bg-muted">
+        <div class="container">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                    The Discovery Problem
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Every brand marketer knows this frustration. We&#39;ve quantified it.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-hover fade-in">
+                    <div class="bg-white border border-border rounded-xl p-8">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-clock text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Stop scrolling. Start finding.</h3>
+                        <p class="text-muted-foreground mb-4">
+                            The average brand marketer spends <strong>2-4 hours browsing Instagram and Threads</strong>
+                            for a single campaign.
+                            <a href="https://www.hubspot.com/marketing-statistics" class="citation"
+                                target="_blank">Source: HubSpot Marketing Statistics 2024</a>
+                        </p>
+                        <p class="text-sm text-muted-foreground">
+                            Hours of infinite scroll, screenshot organization, and bio-reading—only to discover
+                            you&#39;ve been looking at the same 20 creators your competitors already found.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-hover fade-in">
+                    <div class="bg-white border border-border rounded-xl p-8">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-tasks text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Ditch the spreadsheet chaos.</h3>
+                        <p class="text-muted-foreground mb-4">
+                            Creator information scattered across <strong>Instagram DMs, Gmail threads, WeChat messages,
+                                and that one Notes app</strong> you keep meaning to organize.
+                            <a href="https://www.marketingweek.com/crm-systems-marketers/" class="citation"
+                                target="_blank">Source: Marketing Week CRM Survey</a>
+                        </p>
+                        <p class="text-sm text-muted-foreground">
+                            Pricing history, past collaborations, communication preferences—lost in the noise of daily
+                            workflow.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card-hover fade-in">
+                    <div class="bg-white border border-border rounded-xl p-8">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-sync-alt text-2xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Break the same-creator cycle.</h3>
+                        <p class="text-muted-foreground mb-4">
+                            When everyone chases the same visible talent, campaigns blend into indistinguishable noise.
+                            <a href="https://www.influencermarketinghub.com/influencer-marketing-benchmark-report-2024/"
+                                class="citation" target="_blank">Source: Influencer Marketing Hub 2024</a>
+                        </p>
+                        <p class="text-sm text-muted-foreground">
+                            The creators who would genuinely resonate with your audience remain hidden—discoverable only
+                            through systematic, intentional search.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution" class="section-padding">
+        <div class="container">
+            <div class="text-center mb-10 fade-in">
+                <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                    Three Pillars of Better Matching
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    We don&#39;t just list creators. We help you find the right ones.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="card-hover fade-in flex flex-col h-full">
+                    <div class="bg-white border border-border rounded-xl p-8 text-center flex flex-col h-full">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-primary to-purple-400 rounded-full flex items-center justify-center mx-auto mb-6 shrink-0">
+                            <i class="fas fa-brain text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">AI Smart Matching</h3>
+                        <p class="text-muted-foreground mb-6 flex-grow">
+                            Our matching algorithm evaluates niche relevance, content style alignment, audience
+                            demographics, and budget compatibility.
+                        </p>
+                        <div class="bg-muted rounded-lg p-4 mt-auto">
+                            <div class="text-2xl font-bold match-score">87%</div>
+                            <div class="text-sm text-muted-foreground mb-2">Match Score</div>
+                            <div class="text-xs text-left space-y-1">
+                                <div>✓ Strong niche overlap</div>
+                                <div>✓ Target audience match</div>
+                                <div>✓ Budget compatible</div>
+                                <div>✓ Style aligned</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-hover fade-in flex flex-col h-full">
+                    <div class="bg-white border border-border rounded-xl p-8 text-center flex flex-col h-full">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-primary to-purple-400 rounded-full flex items-center justify-center mx-auto mb-6 shrink-0">
+                            <i class="fas fa-paper-plane text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">One-Click Outreach</h3>
+                        <p class="text-muted-foreground mb-6 flex-grow">
+                            From discovery to contact in 30 seconds. Save creators, customize your inquiry with
+                            intelligent suggestions, and send.
+                        </p>
+                        <div class="space-y-2 text-sm mt-auto">
+                            <div class="flex items-center justify-center space-x-2">
+                                <div class="w-3 h-3 bg-primary rounded-full"></div>
+                                <span>Save promising creators</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <div class="w-3 h-3 bg-primary/60 rounded-full"></div>
+                                <span>Customize outreach message</span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <div class="w-3 h-3 bg-primary/30 rounded-full"></div>
+                                <span>Send with one click</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-hover fade-in flex flex-col h-full">
+                    <div class="bg-white border border-border rounded-xl p-8 text-center flex flex-col h-full">
+                        <div
+                            class="w-20 h-20 bg-gradient-to-br from-primary to-purple-400 rounded-full flex items-center justify-center mx-auto mb-6 shrink-0">
+                            <i class="fas fa-user-tie text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-4">Professional Profiles</h3>
+                        <p class="text-muted-foreground mb-6 flex-grow">
+                            Standardized profiles with the information brands actually need: audience insights, content
+                            style, collaboration history, and rates.
+                        </p>
+                        <div class="bg-muted rounded-lg p-4 text-left mt-auto">
+                            <div class="text-sm font-medium mb-2">Profile Completeness</div>
+                            <div class="w-full bg-border rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                            <div class="text-xs text-muted-foreground mt-1">92% complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section-padding bg-muted">
+        <div class="container">
+            <div class="text-center mb-12 fade-in">
+                <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                    How It Works
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Three steps to better creator discovery.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="fade-in flex flex-col">
+                    <div
+                        class="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-6 text-white font-bold text-lg shadow-lg">
+                        1
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Tell us your campaign</h3>
+                    <p class="text-muted-foreground mb-8 flex-grow">
+                        Category, target audience, budget range, preferred platforms, content style, and campaign
+                        objectives.
+                    </p>
+                    <div class="bg-white border border-border rounded-lg p-5 text-left shadow-sm min-h-[160px] flex flex-col justify-center">
+                        <div class="text-sm font-medium mb-3 text-primary">Campaign Brief</div>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between border-b border-muted pb-1">
+                                <span class="text-muted-foreground">Category:</span>
+                                <span class="font-medium">Skincare</span>
+                            </div>
+                            <div class="flex justify-between border-b border-muted pb-1">
+                                <span class="text-muted-foreground">Audience:</span>
+                                <span class="font-medium">Women 25-34</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-muted-foreground">Budget:</span>
+                                <span class="font-medium">$2,000 - $5,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fade-in flex flex-col">
+                    <div
+                        class="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-6 text-white font-bold text-lg shadow-lg">
+                        2
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Get your ranked shortlist</h3>
+                    <p class="text-muted-foreground mb-8 flex-grow">
+                        Within seconds, receive a curated list of creators ranked by match quality, with transparent
+                        scoring and reasoning.
+                    </p>
+                    <div class="bg-white border border-border rounded-lg p-5 text-center shadow-sm min-h-[160px] flex flex-col justify-center">
+                        <div class="text-3xl font-bold match-score mb-1">87%</div>
+                        <div class="text-sm text-muted-foreground mb-4">Match Quality</div>
+                        <div class="text-xs text-left space-y-1 bg-muted/50 p-2 rounded">
+                            <div class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Niche expertise match</div>
+                            <div class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Target audience focus</div>
+                            <div class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i> Budget alignment</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fade-in flex flex-col">
+                    <div
+                        class="w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-6 text-white font-bold text-lg shadow-lg">
+                        3
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Connect directly</h3>
+                    <p class="text-muted-foreground mb-8 flex-grow">
+                        Save promising creators to your shortlist, then reach out with a single click. Intelligent
+                        message templates adapt to each creator&#39;s profile.
+                    </p>
+                    <div class="bg-white border border-border rounded-lg p-5 text-center shadow-sm min-h-[160px] flex flex-col justify-center">
+                        <button class="btn-primary w-full mb-3 shadow-md">Send Inquiry</button>
+                        <div class="text-xs text-muted-foreground">
+                            Personalized outreach in one click
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section id="proof" class="section-padding">
+        <div class="container">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">
+                    Early Validation
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Real creators. Real brands. Real results.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="featured-creator fade-in">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8717.png"
+                            alt="Skincare influencer portrait" class="w-16 h-16 rounded-full" size="small"
+                            aspect="square" style="photo" query="skincare influencer portrait"
+                            referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
+                        <div>
+                            <div class="font-semibold">Elena Rossi</div>
+                            <div class="text-sm text-muted-foreground">Skincare &amp; Wellness</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-muted-foreground mb-3">32K followers • Milan, Italy</div>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Skincare</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Wellness</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Authentic</span>
+                    </div>
+                </div>
+
+                <div class="featured-creator fade-in">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://kimi-web-img.moonshot.cn/img/i1.feedspot.com/c4c3d6803d1a8086d94fdf2fe3129e731e011135.jpg"
+                            alt="Female fitness influencer portrait" class="w-16 h-16 rounded-full" size="small"
+                            aspect="square" style="photo" query="female fitness influencer portrait"
+                            referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
+                        <div>
+                            <div class="font-semibold">Marcus Smith</div>
+                            <div class="text-sm text-muted-foreground">Fitness &amp; Lifestyle</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-muted-foreground mb-3">45K followers • London, UK</div>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Fitness</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Lifestyle</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Motivational</span>
+                    </div>
+                </div>
+
+                <div class="featured-creator fade-in">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8713.png"
+                            alt="Minimalist Asian beauty influencer portrait" class="w-16 h-16 rounded-full"
+                            size="small" aspect="square" style="photo" query="minimalist asian beauty influencer"
+                            referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
+                        <div>
+                            <div class="font-semibold">Aria Chen</div>
+                            <div class="text-sm text-muted-foreground">Beauty &amp; Fashion</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-muted-foreground mb-3">28K followers • New York, US</div>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Beauty</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Fashion</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Minimal</span>
+                    </div>
+                </div>
+
+                <div class="featured-creator fade-in">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <img src="https://kimi-web-img.moonshot.cn/img/placeholder-0620/%E5%9B%BE%E7%89%8714.png"
+                            alt="Portrait of a wellness influencer" class="w-16 h-16 rounded-full" size="small"
+                            aspect="square" style="photo" query="wellness influencer portrait"
+                            referrerpolicy="no-referrer" data-modified="1" data-score="0.00" />
+                        <div>
+                            <div class="font-semibold">Sarah Johnson</div>
+                            <div class="text-sm text-muted-foreground">Wellness &amp; Mindfulness</div>
+                        </div>
+                    </div>
+                    <div class="text-sm text-muted-foreground mb-3">18K followers • Austin, US</div>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Wellness</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Mindfulness</span>
+                        <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded">Holistic</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Early Brand Partners -->
+            <div class="bg-white border border-border rounded-xl p-8 fade-in">
+                <h3 class="text-xl font-semibold mb-6 text-center">Early Brand Partners</h3>
+                <div class="grid md:grid-cols-4 gap-8 items-center">
+                    <div class="text-center">
+                        <div class="h-12 bg-muted rounded flex items-center justify-center mb-2">
+                            <i class="fas fa-leaf text-primary mr-2"></i>
+                            <span class="font-bold text-slate-800">LUMIERE</span>
+                        </div>
+                        <div class="text-xs text-muted-foreground">Natural Skincare</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-12 bg-muted rounded flex items-center justify-center mb-2">
+                            <i class="fas fa-bolt text-primary mr-2"></i>
+                            <span class="font-bold text-slate-800">NOVA GLOW</span>
+                        </div>
+                        <div class="text-xs text-muted-foreground">Wellness Tech</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-12 bg-muted rounded flex items-center justify-center mb-2">
+                            <i class="fas fa-gem text-primary mr-2"></i>
+                            <span class="font-bold text-slate-800">AURA</span>
+                        </div>
+                        <div class="text-xs text-muted-foreground">Premium Beauty</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-12 bg-muted rounded flex items-center justify-center mb-2">
+                            <i class="fas fa-mountain text-primary mr-2"></i>
+                            <span class="font-bold text-slate-800">ZENITH</span>
+                        </div>
+                        <div class="text-xs text-muted-foreground">Outdoor Fitness</div>
+                    </div>
+                </div>
+                <p class="text-sm text-muted-foreground text-center mt-6">
+                    Global lifestyle and beauty brands testing our platform
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section id="cta" class="section-padding bg-slate-900 text-white relative overflow-hidden">
+        <div class="container relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 text-white">
+                        Ready to Transform Your Creator Discovery?
+                    </h2>
+                    <p class="text-xl text-slate-300 mb-8 leading-relaxed">
+                        Join the beta and be among the first to experience AI-powered creator matching on a global scale.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mt-1 shrink-0">
+                                <i class="fas fa-check text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-lg">Free to Browse</div>
+                                <div class="text-slate-400">No commitment required to explore our global creator database.</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mt-1 shrink-0">
+                                <i class="fas fa-magic text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-lg">Early Access Benefits</div>
+                                <div class="text-slate-400">Join a community of forward-thinking brand marketers.</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center mt-1 shrink-0">
+                                <i class="fas fa-rocket text-primary"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-lg">Exclusive Beta Features</div>
+                                <div class="text-slate-400">Get early access to our most advanced AI matching tools.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/10 backdrop-blur rounded-xl p-8 fade-in">
+                    <h3 class="text-xl font-semibold mb-6">Choose Your Path</h3>
+
+                    <div class="space-y-4">
+                        <button
+                            class="w-full bg-white text-primary px-6 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                            onclick="showBrandForm()">
+                            <i class="fas fa-search mr-2"></i>
+                            I&#39;m a Brand - Start Discovering
+                        </button>
+
+                        <button
+                            class="w-full bg-transparent border border-white/30 text-white px-6 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors"
+                            onclick="showCreatorForm()">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            I&#39;m a Creator - Join Platform
+                        </button>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-white/20">
+                        <div class="text-sm opacity-80 mb-2">Questions?</div>
+                        <a href="mailto:hello@aimatchingplatform.com" class="text-white hover:underline">
+                            hello@aimatchingplatform.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- References Section -->
+    <section class="section-padding bg-muted">
+        <div class="container">
+            <h2 class="font-display text-2xl font-bold mb-8 text-center fade-in">References</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm fade-in">
+                <div class="bg-white border border-border rounded-lg p-4">
+                    <strong>HubSpot Marketing Statistics 2024</strong>
+                    <br />
+                    <a href="https://www.hubspot.com/marketing-statistics" class="citation"
+                        target="_blank">https://www.hubspot.com/marketing-statistics</a>
+                </div>
+                <div class="bg-white border border-border rounded-lg p-4">
+                    <strong>Marketing Week CRM Survey</strong>
+                    <br />
+                    <a href="https://www.marketingweek.com/crm-systems-marketers/" class="citation"
+                        target="_blank">https://www.marketingweek.com/crm-systems-marketers/</a>
+                </div>
+                <div class="bg-white border border-border rounded-lg p-4">
+                    <strong>Influencer Marketing Hub Benchmark Report 2024</strong>
+                    <br />
+                    <a href="https://www.influencermarketinghub.com/influencer-marketing-benchmark-report-2024/"
+                        class="citation"
+                        target="_blank">https://www.influencermarketinghub.com/influencer-marketing-benchmark-report-2024/</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Initialize Vanta.js background
+        let vantaEffect = null;
+
+        function initVanta() {
+            if (window.VANTA && window.THREE) {
+                vantaEffect = VANTA.NET({
+                    el: "#vanta-bg",
+                    mouseControls: true,
+                    touchControls: true,
+                    gyroControls: false,
+                    minHeight: 200.00,
+                    minWidth: 200.00,
+                    scale: 1.00,
+                    scaleMobile: 1.00,
+                    color: 0x7c3aed,
+                    backgroundColor: 0xfafaf9,
+                    points: 8.00,
+                    maxDistance: 23.00,
+                    spacing: 17.00
+                });
+            }
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.addEventListener('DOMContentLoaded', function () {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(el => observer.observe(el));
+
+            // Initialize Vanta.js
+            initVanta();
+        });
+
+        // Table of Contents active link tracking
+        const sections = document.querySelectorAll('section[id]');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        function updateActiveLink() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveLink);
+
+        // CTA button handlers
+        function showBrandForm() {
+            alert('Brand discovery interface - coming soon! This will open the campaign brief form.');
+        }
+
+        function showCreatorForm() {
+            alert('Creator onboarding flow - coming soon! This will open the profile creation wizard.');
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (vantaEffect) {
+                vantaEffect.destroy();
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>
