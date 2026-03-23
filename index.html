@@ -1271,6 +1271,12 @@
 
             </div>
         </div>
+        <div class="container" style="text-align: center; margin-top: 2rem; opacity: 0.5;">
+            <p style="font-size: 0.75rem; font-style: italic; line-height: 1.5;">
+                Note: All creators shown are for demonstration purposes. Portraits are AI-generated schematic illustrations.<br>
+                註：以上創作者案例僅供展示，人物頭像均為 AI 生成之示意圖。
+            </p>
+        </div>
     </section>
 
     <!-- ========== HOW IT WORKS ========== -->
@@ -1335,17 +1341,24 @@
         <textarea name="message"></textarea>
     </form>
 
+    <!-- ========== FEEDBACK BANNER ========== -->
+    <section class="section" style="background: var(--bg); padding: 80px 0; border-top: 1px solid var(--border);">
+        <div class="container" style="text-align: center;">
+            <div class="reveal">
+                <p class="section-eyebrow">Collaboration</p>
+                <h2 class="section-title" style="font-size: 2rem;">Help us shape the future<br>of creator discovery.</h2>
+                <p class="section-desc" style="margin: 0 auto 2.5rem auto;">
+                    Nexus is built for you. Have a feature request, found a bug, or just want to chat? We'd love to hear your ideas.
+                </p>
+                <button class="btn-primary" onclick="showFeedbackForm()">Share Your Thoughts</button>
+            </div>
+        </div>
+    </section>
+
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
-            <p style="margin-bottom: 0.5rem; opacity: 0.6; font-style: italic;">
-                Note: All creators shown are for demonstration purposes. Portraits are AI-generated schematic illustrations.<br>
-                註：以上創作者案例僅供展示，人物頭像均為 AI 生成之示意圖。
-            </p>
-            <p>&copy; 2026 Nexus. All rights reserved. 
-                <a href="mailto:hello@nexus.co">hello@nexus.co</a> | 
-                <a href="javascript:void(0)" onclick="showFeedbackForm()">Give Feedback</a>
-            </p>
+            <p>&copy; 2026 Nexus. All rights reserved. <a href="mailto:hello@nexus.co">hello@nexus.co</a></p>
         </div>
     </footer>
 
@@ -1381,17 +1394,19 @@
         // ── DRAGGABLE CAROUSEL (Mouse Support) ──
         Draggable.create("#carousel-track", {
             type: "scrollLeft",
-            edgeResistance: 0.65,
-            inertia: true,
-            autoScroll: 1,
+            edgeResistance: 0.85,
+            inertia: false, // Disabling inertia for scrollLeft to avoid weird layout shifts
+            autoScroll: 0,
             onDragStart: function() {
-                // Disable snap during drag if needed, but scrollLeft usually handles it well
-                document.getElementById('carousel-track').style.scrollSnapType = 'none';
+                this.target.style.scrollSnapType = 'none';
+                this.target.style.cursor = 'grabbing';
             },
             onDragEnd: function() {
-                document.getElementById('carousel-track').style.scrollSnapType = 'x mandatory';
+                this.target.style.scrollSnapType = 'x mandatory';
+                this.target.style.cursor = 'grab';
             }
         });
+        document.getElementById('carousel-track').style.cursor = 'grab';
 
         // ── HERO ENTRANCE ANIMATION ──
         const heroTl = gsap.timeline({ delay: 0.3 });
