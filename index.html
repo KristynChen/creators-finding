@@ -1024,7 +1024,7 @@
                 <li><a href="#creators" target="_self">Creators</a></li>
                 <li><a href="#how-it-works" target="_self">How It Works</a></li>
             </ul>
-            <button class="nav-cta" onclick="showBrandForm()">Get Started</button>
+            <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({ behavior: 'smooth' })">Get Started</button>
         </div>
     </nav>
 
@@ -1315,6 +1315,20 @@
         </div>
     </section>
 
+    <!-- ========== HIDDEN STATIC FORMS FOR NETLIFY DETECTION ========== -->
+    <form name="brand-form" data-netlify="true" hidden>
+        <input type="text" name="brand_name">
+        <select name="campaign_goal"></select>
+        <select name="budget_range"></select>
+        <textarea name="description"></textarea>
+    </form>
+    <form name="creator-form" data-netlify="true" hidden>
+        <input type="text" name="full_name">
+        <input type="text" name="social_handle">
+        <select name="niche"></select>
+        <input type="text" name="follower_count">
+    </form>
+
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
@@ -1416,15 +1430,16 @@
                     <h2 class="modal-title">Let's find your influencers</h2>
                     <p class="modal-subtitle">Tell us about your campaign and we'll match you with the perfect creators.</p>
                 </div>
-                <form id="brand-form" onsubmit="handleFormSubmit(event)">
+                <form id="brand-form" name="brand-form" data-netlify="true" onsubmit="handleFormSubmit(event)">
+                    <input type="hidden" name="form-name" value="brand-form" />
                     <div class="form-group">
                         <label class="form-label">Brand Name</label>
-                        <input type="text" class="form-input" placeholder="e.g. Apple, Nike, etc." required>
+                        <input type="text" name="brand_name" class="form-input" placeholder="e.g. Apple, Nike, etc." required>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Campaign Goal</label>
-                            <select class="form-select" required>
+                            <select name="campaign_goal" class="form-select" required>
                                 <option value="">Select a goal</option>
                                 <option value="awareness">Brand Awareness</option>
                                 <option value="conversion">Sales & Conversion</option>
@@ -1433,7 +1448,7 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label">Monthly Budget</label>
-                            <select class="form-select" required>
+                            <select name="budget_range" class="form-select" required>
                                 <option value="">Select range</option>
                                 <option value="1k-5k">$1,000 – $5,000</option>
                                 <option value="5k-20k">$5,000 – $20,000</option>
@@ -1443,7 +1458,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Brief Description</label>
-                        <textarea class="form-textarea" placeholder="What are you looking for?" required></textarea>
+                        <textarea name="description" class="form-textarea" placeholder="What are you looking for?" required></textarea>
                     </div>
                     <button type="submit" class="form-submit">Request Discovery</button>
                 </form>
@@ -1457,20 +1472,21 @@
                     <h2 class="modal-title">Join the Nexus Network</h2>
                     <p class="modal-subtitle">Apply to connect with global lifestyle, beauty, and fitness brands.</p>
                 </div>
-                <form id="creator-form" onsubmit="handleFormSubmit(event)">
+                <form id="creator-form" name="creator-form" data-netlify="true" onsubmit="handleFormSubmit(event)">
+                    <input type="hidden" name="form-name" value="creator-form" />
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-                            <input type="text" class="form-input" placeholder="John Doe" required>
+                            <input type="text" name="full_name" class="form-input" placeholder="John Doe" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Instagram/TikTok @handle</label>
-                            <input type="text" class="form-input" placeholder="@yourhandle" required>
+                            <input type="text" name="social_handle" class="form-input" placeholder="@yourhandle" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Primary Niche</label>
-                        <select class="form-select" required>
+                        <select name="niche" class="form-select" required>
                             <option value="">Select Niche</option>
                             <option value="fashion">Fashion & Style</option>
                             <option value="fitness">Fitness & Wellness</option>
@@ -1480,7 +1496,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Follower Count</label>
-                        <input type="text" class="form-input" placeholder="e.g. 25K" required>
+                        <input type="text" name="follower_count" class="form-input" placeholder="e.g. 25K" required>
                     </div>
                     <button type="submit" class="form-submit">Submit Application</button>
                 </form>
@@ -1490,15 +1506,23 @@
 
         function handleFormSubmit(e) {
             e.preventDefault();
-            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerText;
             
             submitBtn.innerText = 'Sending...';
             submitBtn.disabled = true;
 
-            // Simulate API call
-            setTimeout(() => {
-                // GSAP Transition
+            // Netlify Form Submission via AJAX
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(formData).toString(),
+            })
+            .then(() => {
+                // GSAP Transition to success state
                 gsap.to(modalFormContainer, {
                     opacity: 0,
                     y: -20,
@@ -1512,11 +1536,15 @@
                         );
                     }
                 });
-                
-                // Reset button for next time (though innerHTML will be replaced)
+            })
+            .catch((error) => {
+                console.error('Netlify Form Error:', error);
+                alert('Submission failed. Please try again.');
+            })
+            .finally(() => {
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
-            }, 1200);
+            });
         }
 
         // ── Smooth scroll for same-page anchors ──
