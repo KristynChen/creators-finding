@@ -503,7 +503,10 @@
         }
 
         .carousel-track {
-            display: flex;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            align-items: stretch;
             gap: 1.5rem;
             padding: 2rem 22px;
             overflow-x: auto;
