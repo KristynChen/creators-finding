@@ -5,12 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nexus — Discover Creators Who Move Culture</title>
-    <meta name="description" content="Nexus is a premium AI-powered creator discovery platform. Find the right voices for your brand — not just the loudest ones." />
+    <meta name="description"
+        content="Nexus is a premium AI-powered creator discovery platform. Find the right voices for your brand — not just the loudest ones." />
 
     <!-- Google Fonts: Outfit (Display) + Inter (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
 
     <!-- Three.js + Vanta.js for interactive mesh background -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
@@ -296,8 +299,17 @@
         }
 
         @keyframes scrollPulse {
-            0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
-            50% { opacity: 1; transform: scaleY(1); }
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scaleY(0.5);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scaleY(1);
+            }
         }
 
         /* ========================================
@@ -366,7 +378,8 @@
             font-family: var(--font-display);
             font-size: 3rem;
             font-weight: 800;
-            color: #D1D1D6; /* Darkened from bg-secondary so it is visible */
+            color: #D1D1D6;
+            /* Darkened from bg-secondary so it is visible */
             line-height: 1;
             margin-bottom: 1.5rem;
         }
@@ -386,94 +399,92 @@
         }
 
         /* ========================================
-           PILLARS — Solution Section
+           PILLARS — Solution Section (3-Column)
            ======================================== */
 
-        .pillar-row {
+        .pillar-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-            padding: 80px 0;
-            border-bottom: 1px solid var(--border);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
         }
 
-        .pillar-row:last-child {
-            border-bottom: none;
+        @media (max-width: 768px) {
+            .pillar-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
         }
 
-        .pillar-row.reverse {
-            direction: rtl;
-        }
-
-        .pillar-row.reverse > * {
-            direction: ltr;
-        }
-
-        .pillar-visual {
-            background: var(--bg-secondary);
+        .pillar-card {
+            background: #fff;
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            aspect-ratio: 4/3;
             overflow: hidden;
-            position: relative;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .pillar-visual img {
+        .pillar-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-4px);
+        }
+
+        .pillar-card-visual {
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+        }
+
+        .pillar-card-visual img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .pillar-visual:hover img {
+        .pillar-card:hover .pillar-card-visual img {
             transform: scale(1.04);
         }
 
-        .pillar-content .pillar-number {
+        .pillar-card-body {
+            padding: 1.5rem;
+        }
+
+        .pillar-card-body .pillar-number {
             font-family: var(--font-display);
-            font-size: 0.8125rem;
+            font-size: 0.6875rem;
             font-weight: 600;
             color: var(--fg-tertiary);
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
-        .pillar-content h3 {
+        .pillar-card-body h3 {
             font-family: var(--font-display);
-            font-size: 2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             letter-spacing: -0.02em;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
 
-        .pillar-content p {
-            font-size: 1rem;
+        .pillar-card-body p {
+            font-size: 0.875rem;
             color: var(--fg-secondary);
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
         }
 
         .pillar-tag {
             display: inline-block;
-            font-size: 0.75rem;
+            font-size: 0.6875rem;
             font-weight: 500;
-            color: var(--accent);
-            background: rgba(0, 113, 227, 0.06);
-            padding: 0.35rem 0.8rem;
+            color: var(--fg);
+            background: var(--bg-secondary);
+            padding: 0.3rem 0.7rem;
             border-radius: 980px;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .pillar-row,
-            .pillar-row.reverse {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-                direction: ltr;
-                padding: 60px 0;
-            }
+            margin-right: 0.35rem;
+            margin-bottom: 0.35rem;
         }
 
         /* ========================================
@@ -510,14 +521,17 @@
             padding: 2rem 22px;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE */
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE */
             -webkit-overflow-scrolling: touch;
             will-change: transform;
         }
 
         .carousel-track::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
+            display: none;
+            /* Chrome, Safari, Opera */
         }
 
         .creator-card {
@@ -763,8 +777,15 @@
         }
 
         @keyframes orbFloat {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-45%, -55%) scale(1.08); }
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                transform: translate(-45%, -55%) scale(1.08);
+            }
         }
 
         /* ========================================
@@ -773,14 +794,24 @@
 
         /* Reduced motion preference */
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
+
+            *,
+            *::before,
+            *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
                 scroll-behavior: auto !important;
             }
-            .gradient-orb { animation: none; }
-            .scroll-line { animation: none; opacity: 0.5; }
+
+            .gradient-orb {
+                animation: none;
+            }
+
+            .scroll-line {
+                animation: none;
+                opacity: 0.5;
+            }
         }
 
         /* Focus-visible for keyboard navigation */
@@ -930,7 +961,9 @@
             letter-spacing: 0.01em;
         }
 
-        .form-input, .form-select, .form-textarea {
+        .form-input,
+        .form-select,
+        .form-textarea {
             width: 100%;
             padding: 0.85rem 1rem;
             background: var(--bg-secondary);
@@ -942,7 +975,9 @@
             transition: all 0.2s;
         }
 
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
             outline: none;
             background: #fff;
             border-color: var(--accent);
@@ -1026,7 +1061,8 @@
                 <li><a href="#creators" target="_self">Creators</a></li>
                 <li><a href="#how-it-works" target="_self">How It Works</a></li>
             </ul>
-            <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({ behavior: 'smooth' })">Get Started</button>
+            <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({ behavior: 'smooth' })">Get
+                Started</button>
         </div>
     </nav>
 
@@ -1066,80 +1102,87 @@
                 <div class="problem-card reveal">
                     <div class="number">01</div>
                     <h3>Endless scrolling</h3>
-                    <p>The average brand marketer spends 2–4 hours browsing Instagram for a single campaign. Hours of infinite scroll to find creators your competitors already found.</p>
+                    <p>The average brand marketer spends 2–4 hours browsing Instagram for a single campaign. Hours of
+                        infinite scroll to find creators your competitors already found.</p>
                 </div>
                 <div class="problem-card reveal">
                     <div class="number">02</div>
                     <h3>Scattered data</h3>
-                    <p>Creator information scattered across Instagram DMs, Gmail threads, and Note apps. Pricing history, past collaborations — lost in the noise.</p>
+                    <p>Creator information scattered across Instagram DMs, Gmail threads, and Note apps. Pricing
+                        history, past collaborations — lost in the noise.</p>
                 </div>
                 <div class="problem-card reveal">
                     <div class="number">03</div>
                     <h3>Same faces, same results</h3>
-                    <p>When everyone chases the same visible talent, campaigns blend into noise. The right creators remain hidden without systematic search.</p>
+                    <p>When everyone chases the same visible talent, campaigns blend into noise. The right creators
+                        remain hidden without systematic search.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- ========== SOLUTION (PILLARS) ========== -->
-    <section class="section" id="solution">
+    <section class="section" id="solution" style="padding: 80px 0;">
         <div class="container">
-            <div class="reveal" style="text-align: center; margin-bottom: 2rem;">
+            <div class="reveal" style="text-align: center; margin-bottom: 0;">
                 <p class="section-eyebrow">The Solution</p>
                 <h2 class="section-title">Three pillars of<br>better matching.</h2>
-                <p class="section-desc" style="margin: 0 auto;">We don't just list creators. We help you find the right ones.</p>
+                <p class="section-desc" style="margin: 0 auto;">We don't just list creators. We help you find the right
+                    ones.</p>
             </div>
-        </div>
 
-        <div class="container-wide">
-            <!-- Pillar 1 -->
-            <div class="pillar-row reveal">
-                <div class="pillar-visual">
-                    <img src="assets/pillar_smart_matching.png" alt="Smart Matching — connecting creators with brands through intelligent matching" />
-                </div>
-                <div class="pillar-content">
-                    <p class="pillar-number">Pillar 01</p>
-                    <h3>Smart Matching</h3>
-                    <p>Our algorithm evaluates niche relevance, content style, audience demographics, and budget compatibility — far beyond basic tags.</p>
-                    <div>
-                        <span class="pillar-tag">Niche Overlap</span>
-                        <span class="pillar-tag">Audience Fit</span>
-                        <span class="pillar-tag">Performance Validated</span>
+            <div class="pillar-grid">
+                <!-- Pillar 1 -->
+                <div class="pillar-card reveal">
+                    <div class="pillar-card-visual">
+                        <img src="assets/pillar_smart_matching.png" alt="Smart Matching" />
+                    </div>
+                    <div class="pillar-card-body">
+                        <p class="pillar-number">Pillar 01</p>
+                        <h3>Smart Matching</h3>
+                        <p>Our algorithm evaluates niche relevance, content style, audience demographics, and budget
+                            compatibility — far beyond basic tags.</p>
+                        <div>
+                            <span class="pillar-tag">Niche Overlap</span>
+                            <span class="pillar-tag">Audience Fit</span>
+                            <span class="pillar-tag">Performance Validated</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Pillar 2 -->
-            <div class="pillar-row reverse reveal">
-                <div class="pillar-visual">
-                    <img src="assets/pillar_outreach.png" alt="One-Click Outreach — seamless communication with creators" />
-                </div>
-                <div class="pillar-content">
-                    <p class="pillar-number">Pillar 02</p>
-                    <h3>One-Click Outreach</h3>
-                    <p>From discovery to initial contact in under 30 seconds. Organize your shortlist and reach out with intelligent, personalized templates.</p>
-                    <div>
-                        <span class="pillar-tag">Campaign Briefs</span>
-                        <span class="pillar-tag">Reply Tracking</span>
-                        <span class="pillar-tag">Centralized Inbox</span>
+                <!-- Pillar 2 -->
+                <div class="pillar-card reveal">
+                    <div class="pillar-card-visual">
+                        <img src="assets/pillar_outreach.png" alt="One-Click Outreach" />
+                    </div>
+                    <div class="pillar-card-body">
+                        <p class="pillar-number">Pillar 02</p>
+                        <h3>One-Click Outreach</h3>
+                        <p>From discovery to initial contact in under 30 seconds. Organize your shortlist and reach out
+                            with intelligent, personalized templates.</p>
+                        <div>
+                            <span class="pillar-tag">Campaign Briefs</span>
+                            <span class="pillar-tag">Reply Tracking</span>
+                            <span class="pillar-tag">Centralized Inbox</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Pillar 3 -->
-            <div class="pillar-row reveal">
-                <div class="pillar-visual">
-                    <img src="assets/pillar_intelligence.png" alt="Professional Intelligence — verified creator analytics and insights" />
-                </div>
-                <div class="pillar-content">
-                    <p class="pillar-number">Pillar 03</p>
-                    <h3>Professional Intelligence</h3>
-                    <p>Stop guessing. Access verified data on audience demographics, past performance metrics, and standardized commercial rates.</p>
-                    <div>
-                        <span class="pillar-tag">Verified Data</span>
-                        <span class="pillar-tag">92% Authenticity</span>
-                        <span class="pillar-tag">Global Database</span>
+                <!-- Pillar 3 -->
+                <div class="pillar-card reveal">
+                    <div class="pillar-card-visual">
+                        <img src="assets/pillar_intelligence.png" alt="Professional Intelligence" />
+                    </div>
+                    <div class="pillar-card-body">
+                        <p class="pillar-number">Pillar 03</p>
+                        <h3>Professional Intelligence</h3>
+                        <p>Stop guessing. Access verified data on audience demographics, past performance metrics, and
+                            standardized commercial rates.</p>
+                        <div>
+                            <span class="pillar-tag">Verified Data</span>
+                            <span class="pillar-tag">92% Authenticity</span>
+                            <span class="pillar-tag">Global Database</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1159,7 +1202,8 @@
 
                 <!-- Card 1 -->
                 <div class="creator-card">
-                    <img src="assets/creator_1_editorial.png" alt="Elena Rossi — Fashion & Lifestyle" class="creator-card-img" />
+                    <img src="assets/creator_1_editorial.png" alt="Elena Rossi — Fashion & Lifestyle"
+                        class="creator-card-img" />
                     <div class="creator-card-body">
                         <div class="creator-card-name">Elena Rossi</div>
                         <div class="creator-card-niche">Fashion & Lifestyle</div>
@@ -1178,7 +1222,8 @@
 
                 <!-- Card 2 -->
                 <div class="creator-card">
-                    <img src="assets/creator_2_fitness.png" alt="Marcus Smith — Fitness & Lifestyle" class="creator-card-img" />
+                    <img src="assets/creator_2_fitness.png" alt="Marcus Smith — Fitness & Lifestyle"
+                        class="creator-card-img" />
                     <div class="creator-card-body">
                         <div class="creator-card-name">Marcus Smith</div>
                         <div class="creator-card-niche">Fitness & Lifestyle</div>
@@ -1197,7 +1242,8 @@
 
                 <!-- Card 3 -->
                 <div class="creator-card">
-                    <img src="assets/creator_3_beauty.png" alt="Aria Chen — Beauty & Fashion" class="creator-card-img" />
+                    <img src="assets/creator_3_beauty.png" alt="Aria Chen — Beauty & Fashion"
+                        class="creator-card-img" />
                     <div class="creator-card-body">
                         <div class="creator-card-name">Aria Chen</div>
                         <div class="creator-card-niche">Beauty & Fashion</div>
@@ -1216,7 +1262,8 @@
 
                 <!-- Card 4 -->
                 <div class="creator-card">
-                    <img src="assets/creator_4_wellness.png" alt="Sarah Johnson — Wellness & Mindfulness" class="creator-card-img" />
+                    <img src="assets/creator_4_wellness.png" alt="Sarah Johnson — Wellness & Mindfulness"
+                        class="creator-card-img" />
                     <div class="creator-card-body">
                         <div class="creator-card-name">Sarah Johnson</div>
                         <div class="creator-card-niche">Wellness & Mindfulness</div>
@@ -1254,7 +1301,8 @@
 
                 <!-- Card 6 -->
                 <div class="creator-card">
-                    <img src="assets/creator_6_travel.png" alt="Chloe Dubois — Travel & Culture" class="creator-card-img" />
+                    <img src="assets/creator_6_travel.png" alt="Chloe Dubois — Travel & Culture"
+                        class="creator-card-img" />
                     <div class="creator-card-body">
                         <div class="creator-card-name">Chloe Dubois</div>
                         <div class="creator-card-niche">Travel & Culture</div>
@@ -1275,8 +1323,8 @@
         </div>
         <div class="container" style="text-align: center; margin-top: 2rem; opacity: 0.5;">
             <p style="font-size: 0.75rem; font-style: italic; line-height: 1.5;">
-                Note: All creators shown are for demonstration purposes. Portraits are AI-generated schematic illustrations.<br>
-                註：以上創作者案例僅供展示，人物頭像均為 AI 生成之示意圖。
+                Note: All creators shown are for demonstration purposes. Portraits are AI-generated schematic
+                illustrations.<br>
             </p>
         </div>
     </section>
@@ -1293,12 +1341,14 @@
                 <div class="step-card reveal">
                     <div class="step-number">01</div>
                     <h3>Define your campaign</h3>
-                    <p>Set your goals, audience, budget, and platforms. Our matching engine maps these to the global creator landscape.</p>
+                    <p>Set your goals, audience, budget, and platforms. Our matching engine maps these to the global
+                        creator landscape.</p>
                 </div>
                 <div class="step-card reveal">
                     <div class="step-number">02</div>
                     <h3>Review your shortlist</h3>
-                    <p>Receive a precision-curated list ranked by match quality. Every recommendation comes with clear reasoning.</p>
+                    <p>Receive a precision-curated list ranked by match quality. Every recommendation comes with clear
+                        reasoning.</p>
                 </div>
                 <div class="step-card reveal">
                     <div class="step-number">03</div>
@@ -1348,9 +1398,11 @@
         <div class="container" style="text-align: center;">
             <div class="reveal">
                 <p class="section-eyebrow">Collaboration</p>
-                <h2 class="section-title" style="font-size: 2rem;">Help us shape the future<br>of creator discovery.</h2>
+                <h2 class="section-title" style="font-size: 2rem;">Help us shape the future<br>of creator discovery.
+                </h2>
                 <p class="section-desc" style="margin: 0 auto 2.5rem auto;">
-                    Nexus is built for you. Have a feature request, found a bug, or just want to chat? We'd love to hear your ideas.
+                    Nexus is built for you. Have a feature request, found a bug, or just want to chat? We'd love to hear
+                    your ideas.
                 </p>
                 <button class="btn-primary" onclick="showFeedbackForm()">Share Your Thoughts</button>
             </div>
@@ -1369,18 +1421,19 @@
         <div class="modal-container">
             <button class="modal-close" onclick="closeModal()">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M1 1L13 13M1 13L13 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </button>
             <div class="modal-content">
                 <!-- Content will be injected here -->
                 <div id="modal-form-container"></div>
-                
+
                 <!-- Success State -->
                 <div id="success-state" class="success-state">
                     <div class="success-icon">✓</div>
                     <h2 class="modal-title">Registration Received</h2>
-                    <p class="modal-subtitle">Thank you for your interest in Nexus. Our team will review your application and get back to you within 24 hours.</p>
+                    <p class="modal-subtitle">Thank you for your interest in Nexus. Our team will review your
+                        application and get back to you within 24 hours.</p>
                     <button class="form-submit" onclick="closeModal()" style="margin-top: 2rem;">Got it</button>
                 </div>
             </div>
@@ -1394,7 +1447,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ── DRAGGABLE CAROUSEL (Vanilla JS — no layout side-effects) ──
-        (function() {
+        (function () {
             const track = document.getElementById('carousel-track');
             let isDown = false;
             let startX;
@@ -1613,10 +1666,10 @@
             e.preventDefault();
             const form = e.target;
             const formData = new FormData(form);
-            
+
             const submitBtn = form.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerText;
-            
+
             submitBtn.innerText = 'Sending...';
             submitBtn.disabled = true;
 
@@ -1626,30 +1679,30 @@
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: new URLSearchParams(formData).toString(),
             })
-            .then(() => {
-                // GSAP Transition to success state
-                gsap.to(modalFormContainer, {
-                    opacity: 0,
-                    y: -20,
-                    duration: 0.4,
-                    onComplete: () => {
-                        modalFormContainer.style.display = 'none';
-                        successState.style.display = 'block';
-                        gsap.fromTo(successState, 
-                            { opacity: 0, y: 20 },
-                            { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.7)' }
-                        );
-                    }
+                .then(() => {
+                    // GSAP Transition to success state
+                    gsap.to(modalFormContainer, {
+                        opacity: 0,
+                        y: -20,
+                        duration: 0.4,
+                        onComplete: () => {
+                            modalFormContainer.style.display = 'none';
+                            successState.style.display = 'block';
+                            gsap.fromTo(successState,
+                                { opacity: 0, y: 20 },
+                                { opacity: 1, y: 0, duration: 0.5, ease: 'back.out(1.7)' }
+                            );
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error('Netlify Form Error:', error);
+                    alert('Submission failed. Please try again.');
+                })
+                .finally(() => {
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
                 });
-            })
-            .catch((error) => {
-                console.error('Netlify Form Error:', error);
-                alert('Submission failed. Please try again.');
-            })
-            .finally(() => {
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-            });
         }
 
         // ── Smooth scroll for same-page anchors ──
