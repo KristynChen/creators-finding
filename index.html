@@ -19,7 +19,6 @@
     <!-- GSAP for premium animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
 
     <style>
         /* ========================================
@@ -503,9 +502,9 @@
         }
 
         .carousel-track {
-            display: flex !important;
-            flex-direction: row !important;
-            flex-wrap: nowrap !important;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
             align-items: stretch;
             gap: 1.5rem;
             padding: 2rem 22px;
@@ -1392,24 +1391,47 @@
     <!-- ========== SCRIPTS ========== -->
     <script>
         // ── Register GSAP Plugins ──
-        gsap.registerPlugin(ScrollTrigger, Draggable);
+        gsap.registerPlugin(ScrollTrigger);
 
-        // ── DRAGGABLE CAROUSEL (Mouse Support) ──
-        Draggable.create("#carousel-track", {
-            type: "scrollLeft",
-            edgeResistance: 0.85,
-            inertia: false, // Disabling inertia for scrollLeft to avoid weird layout shifts
-            autoScroll: 0,
-            onDragStart: function() {
-                this.target.style.scrollSnapType = 'none';
-                this.target.style.cursor = 'grabbing';
-            },
-            onDragEnd: function() {
-                this.target.style.scrollSnapType = 'x mandatory';
-                this.target.style.cursor = 'grab';
-            }
-        });
-        document.getElementById('carousel-track').style.cursor = 'grab';
+        // ── DRAGGABLE CAROUSEL (Vanilla JS — no layout side-effects) ──
+        (function() {
+            const track = document.getElementById('carousel-track');
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            track.style.cursor = 'grab';
+
+            track.addEventListener('mousedown', (e) => {
+                isDown = true;
+                track.style.cursor = 'grabbing';
+                track.style.scrollSnapType = 'none';
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+                e.preventDefault();
+            });
+
+            track.addEventListener('mouseleave', () => {
+                if (!isDown) return;
+                isDown = false;
+                track.style.cursor = 'grab';
+                track.style.scrollSnapType = 'x mandatory';
+            });
+
+            track.addEventListener('mouseup', () => {
+                isDown = false;
+                track.style.cursor = 'grab';
+                track.style.scrollSnapType = 'x mandatory';
+            });
+
+            track.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.5; // scroll speed multiplier
+                track.scrollLeft = scrollLeft - walk;
+            });
+        })();
 
         // ── HERO ENTRANCE ANIMATION ──
         const heroTl = gsap.timeline({ delay: 0.3 });
