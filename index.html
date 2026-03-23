@@ -1328,11 +1328,24 @@
         <select name="niche"></select>
         <input type="text" name="follower_count">
     </form>
+    <form name="feedback-form" data-netlify="true" hidden>
+        <input type="text" name="user_name">
+        <input type="email" name="user_email">
+        <select name="type"></select>
+        <textarea name="message"></textarea>
+    </form>
 
     <!-- ========== FOOTER ========== -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Nexus. All rights reserved. <a href="mailto:hello@nexus.co">hello@nexus.co</a></p>
+            <p style="margin-bottom: 0.5rem; opacity: 0.6; font-style: italic;">
+                Note: All creators shown are for demonstration purposes. Portraits are AI-generated schematic illustrations.<br>
+                註：以上創作者案例僅供展示，人物頭像均為 AI 生成之示意圖。
+            </p>
+            <p>&copy; 2026 Nexus. All rights reserved. 
+                <a href="mailto:hello@nexus.co">hello@nexus.co</a> | 
+                <a href="javascript:void(0)" onclick="showFeedbackForm()">Give Feedback</a>
+            </p>
         </div>
     </footer>
 
@@ -1363,7 +1376,22 @@
     <!-- ========== SCRIPTS ========== -->
     <script>
         // ── Register GSAP Plugins ──
-        gsap.registerPlugin(ScrollTrigger);
+        gsap.registerPlugin(ScrollTrigger, Draggable);
+
+        // ── DRAGGABLE CAROUSEL (Mouse Support) ──
+        Draggable.create("#carousel-track", {
+            type: "scrollLeft",
+            edgeResistance: 0.65,
+            inertia: true,
+            autoScroll: 1,
+            onDragStart: function() {
+                // Disable snap during drag if needed, but scrollLeft usually handles it well
+                document.getElementById('carousel-track').style.scrollSnapType = 'none';
+            },
+            onDragEnd: function() {
+                document.getElementById('carousel-track').style.scrollSnapType = 'x mandatory';
+            }
+        });
 
         // ── HERO ENTRANCE ANIMATION ──
         const heroTl = gsap.timeline({ delay: 0.3 });
@@ -1503,6 +1531,43 @@
             `;
             openModal();
         }
+        function showFeedbackForm() {
+            modalFormContainer.innerHTML = `
+                <div class="modal-header">
+                    <h2 class="modal-title">Your Feedback</h2>
+                    <p class="modal-subtitle">Help us improve Nexus. We'd love to hear your thoughts or reports.</p>
+                </div>
+                <form id="feedback-form" name="feedback-form" data-netlify="true" onsubmit="handleFormSubmit(event)">
+                    <input type="hidden" name="form-name" value="feedback-form" />
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Name (Optional)</label>
+                            <input type="text" name="user_name" class="form-input" placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email (Optional)</label>
+                            <input type="email" name="user_email" class="form-input" placeholder="email@example.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Feedback Type</label>
+                        <select name="type" class="form-select" required>
+                            <option value="suggestion">Suggestion</option>
+                            <option value="bug">Report a Bug</option>
+                            <option value="praise">Praise</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Message</label>
+                        <textarea name="message" class="form-textarea" placeholder="How can we help you?" required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit">Send Feedback</button>
+                </form>
+            `;
+            openModal();
+        }
+
 
         function handleFormSubmit(e) {
             e.preventDefault();
